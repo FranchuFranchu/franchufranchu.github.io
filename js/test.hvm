@@ -1,0 +1,16 @@
+_U60.fib = λ_n
+  match _n = _n {
+    0: 0
+    +: match _n = _n-1 {
+      0: 1
+      +:
+        let _n-2 = _n-1
+        (+
+          (_U60.fib (- _n 1))
+          (_U60.fib (- _n 2)))
+    }
+  }
+__foo = 45
+__main = (_U60.fib 6)
+
+main = __main

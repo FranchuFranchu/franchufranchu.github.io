@@ -1,0 +1,262 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://franchufranchu.github.io">
+
+    
+    <title>franchu blog • Reading back inets in a single pass</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="franchu blog" href="https://franchufranchu.github.io/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/main.css?h=03882d7b0d0cfe74b15f" />
+        <link rel="stylesheet" href="https://franchufranchu.github.io/skins/franchu.css?h=4060f41fdbd6f1a3aede" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="" />
+        <meta property="og:description" content="" />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="Reading back inets in a single pass" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;answers&#x2F;single-pass-readback&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
+        <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
+        <script defer src="https://franchufranchu.github.io/js/themeSwitcher.min.js"></script><script src="/js/ASCIIMathML.js"></script>
+
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://franchufranchu.github.io>franchu blog</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/questions/">
+                                questions
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/answers/">
+                                answers
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/junk/">
+                                junk
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/archive/">
+                                archive
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/tags/">
+                                tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/about/">
+                                about
+                                </a>
+                            </li>
+                        
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div 
+class="content"
+>
+
+        
+        
+
+
+
+
+<main>
+    <article>
+        <h1 class="article-title">
+            Reading back inets in a single pass
+        </h1>
+
+        <ul class="meta">
+            
+
+            
+
+            
+            
+                • <li title="667 words">4 min read</li>
+            
+        </ul>
+        
+
+        
+        
+
+        <section class="body">
+            
+            
+            <p>Interaction Nets are a model of computation. There exist an interaction sysatem that can be used to implement the λ-calculus. In this article I'll discuss a readback algorithm that can be used to read an interaction net into a λ-calculus term. </p>
+<p>This article assumes that the reader is somewhat familiar with the symmetric interaction calculus.</p>
+<h2 id="polarity">Polarity</h2>
+<p>A very important concept that springs up when talking about readback is <em>polarity</em>. It turns out that the interaction nets that correspond to λ-calculus terms can be <em>polarized</em>. A polarization of an interaction net is a labeling of ports with either <code>+</code> or <code>-</code>, such that all wires connect a <code>+</code> port and a <code>-</code> port. Each agent type has a fixed polarization for its ports.</p>
+<p>For the purposes of polarization, CON agents are not always the same CON agent type, but sometimes they represent LAM agents and sometimes they represent APP agents, depending on context. Similarly, DUP agents are either DUP agents or SUP agents, depending on context. </p>
+<p>Later on, we will see how the readback algorithm always has enough information to distinguish between DUP/SUP and LAM/APP when reaching a node.</p>
+<h3 id="sic-polarization">SIC Polarization</h3>
+<p>For inets representing λ-calculus, <code>+</code>-polarized ports will represent ports that &quot;produce&quot; terms, while <code>-</code>-polarized ports will represent ports that &quot;consume&quot; terms.</p>
+<p>It's important to concretely define what is meant by &quot;produce&quot; and &quot;consume&quot; here. Does a LAM node &quot;produce&quot; or &quot;consume&quot; its argument? A common interpretation is &quot;well, a LAM node is simply waiting to 'eat' an argument from an APP node, so it definitely consumes an argument&quot;. But that's not the definition that's used to define <code>+</code> and <code>-</code>. Polarity does not depend on what <em>will happen</em> to the node; it only depends on what it <em>currently represents</em> in the λ-calculus AST. Thanks to the LAM node, there's a variable that can be used somewhere else. This means that the LAM node <em>produced</em> the variable.</p>
+<p>So, for example, a LAM node &quot;produces&quot; an argument and the function, while it &quot;consumes&quot; the body. Given a body term, the LAM node will create an argument and a function that sets the argument and returns the function body. Their polarity is <code>+/+/-</code>.</p>
+<p>An APP node is the opposite. It &quot;consumes&quot; the function and an argument, while it &quot;produces&quot; the return value of the function. Given a function and an argument, the APP node can be used to create an application of the function to the argument. Their polarity is <code>-/-/+</code>.</p>
+<p>The two CON node variants have opposite polarities. In both of them, the two auxiliary ports have opposite polarities. The fact that they polarity sets are exact opposites of one another means that annihilation between them respects polarity, as shown here.</p>
+<p>DUP nodes consume a term from their principal port, and produce two copies of it through their auxiliary port. Their polarity is <code>-/+/+</code>.</p>
+<p>SUP nodes consume two terms through their auxiliary ports, and produce their superposition through their principal port. Their polarity is <code>+/-/-</code></p>
+<p>Polarity is what makes terms such as <code>(λx λx (y y))</code> invalid. <code>x</code> is bound twice and <code>y</code> is used twice. </p>
+<p>You can't plug two lambda arguments together. In polarity, this is encoded by the fact that LAM argument ports have positive polarity, and can't be plugged in together.</p>
+<p>You also can't plug an application's argument and an application's function. In polarity, this is represented by the application argument and the application function both having negative polarity.</p>
+<h4 id="on-readback">On readback</h4>
+<p>If a readback algorithm reaches a node through any of its ports, if it knows the polarity of the port it came from, it can deduce the node type variant of the node it reached. </p>
+<p>For example, if we reach a CON node through its principal port, coming from a <code>-</code> port, we know the CON node must produce a value through its principal port. This means that the CON node is a LAM node and represents a lambda.</p>
+<p>This is because there are no two variants that have the same polarity for any of the nodes.</p>
+<h2 id="the-algorithm">The algorithm.</h2>
+
+        </section>
+
+        
+        
+        
+        
+
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+
+        
+        
+
+        
+        
+
+    </article>
+</main>
+
+
+<span id="copy-success" class="hidden">
+        Copied!
+    </span>
+    <span id="copy-init" class="hidden">
+        Copy code to clipboard
+    </span>
+    <script defer src="https://franchufranchu.github.io/js/copyCodeToClipboard.min.js"></script>
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+                ¿qué haría Piñón Fijo?
+            </small>
+        </div>
+    </section>
+
+    </footer>
+
+</body>
+
+</html>

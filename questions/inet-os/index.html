@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://franchufranchu.github.io">
+
+    
+    <title>franchu blog • inet-os</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="franchu blog" href="https://franchufranchu.github.io/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/main.css?h=03882d7b0d0cfe74b15f" />
+        <link rel="stylesheet" href="https://franchufranchu.github.io/skins/franchu.css?h=4060f41fdbd6f1a3aede" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="a kernel that runs a huge inet" />
+        <meta property="og:description" content="a kernel that runs a huge inet" />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="inet-os" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;questions&#x2F;inet-os&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
+        <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
+        <script defer src="https://franchufranchu.github.io/js/themeSwitcher.min.js"></script><script src="/js/ASCIIMathML.js"></script>
+
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://franchufranchu.github.io>franchu blog</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/questions/">
+                                questions
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/answers/">
+                                answers
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/junk/">
+                                junk
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/archive/">
+                                archive
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/tags/">
+                                tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/about/">
+                                about
+                                </a>
+                            </li>
+                        
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div 
+class="content"
+>
+
+        
+        
+
+
+
+
+<main>
+    <article>
+        <h1 class="article-title">
+            inet-os
+        </h1>
+
+        <ul class="meta">
+            
+
+            
+
+            
+            
+        </ul>
+        
+
+        
+        
+
+        <section class="body">
+            
+            
+            <p>A whole operating system can run on top of interaction nets.</p>
+<p>We only need a few primitives to do this.</p>
+<h3 id="limits"><a class="header-anchor no-hover-padding" href="#limits" aria-label="Anchor link for: limits"><span class="link-icon" aria-hidden="true"></span></a>
+Limits</h3>
+<p>Redexes would have a provenance that points to a limit object. It determines the max amount of rwts/mem/limits that a set of redexes can use before stopping.</p>
+<pre class="z-code"><code><span class="z-text z-plain">// Id is the type of λx x
+</span><span class="z-text z-plain">HVM.max_rewrites: (max: u64) -&gt; (f: (Id -&gt; U)) -&gt; Either (Id -&gt; U) U
+</span><span class="z-text z-plain">HVM.max_nodes: (max: u64) -&gt; (f: (Id -&gt; U)) -&gt; Either (Id -&gt; U) U
+</span><span class="z-text z-plain">HVM.max_limits: (max: u64) -&gt; (f: (Id -&gt; U)) -&gt; Either (Id -&gt; U) U
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">// Provenance/Program internal state:
+</span><span class="z-text z-plain">struct State {
+</span><span class="z-text z-plain">  rewrites: u64,
+</span><span class="z-text z-plain">  nodes: u64,
+</span><span class="z-text z-plain">  limits: u64,
+</span><span class="z-text z-plain">}
+</span></code></pre>
+<p>This would allow running untrusted code.</p>
+<h3 id="io"><a class="header-anchor no-hover-padding" href="#io" aria-label="Anchor link for: io"><span class="link-icon" aria-hidden="true"></span></a>
+IO</h3>
+<p>Continuation passing style would be used to carry out IO.</p>
+
+        </section>
+
+        
+        
+        
+        
+
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+
+        
+        
+
+        
+        
+
+    </article>
+</main>
+
+    <div id="button-container">
+        
+        
+            <div id="toc-floating-container">
+                <input type="checkbox" id="toc-toggle" class="toggle"/>
+                <label for="toc-toggle" class="overlay"></label>
+                <label for="toc-toggle" id="toc-button" class="button" title="Toggle Table of Contents">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M414.82-193.094q-18.044 0-30.497-12.32-12.453-12.319-12.453-30.036t12.453-30.086q12.453-12.37 30.497-12.37h392.767q17.237 0 29.927 12.487 12.69 12.486 12.69 30.203 0 17.716-12.69 29.919t-29.927 12.203H414.82Zm0-244.833q-18.044 0-30.497-12.487Q371.87-462.9 371.87-480.45t12.453-29.92q12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.511 12.69 12.512 12.69 29.845 0 17.716-12.69 30.086-12.69 12.37-29.927 12.37H414.82Zm0-245.167q-18.044 0-30.497-12.32t-12.453-30.037q0-17.716 12.453-30.086 12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.486 12.69 12.487 12.69 30.203 0 17.717-12.69 29.92-12.69 12.203-29.927 12.203H414.82ZM189.379-156.681q-32.652 0-55.878-22.829t-23.226-55.731q0-32.549 23.15-55.647 23.151-23.097 55.95-23.097 32.799 0 55.313 23.484 22.515 23.484 22.515 56.246 0 32.212-22.861 54.893-22.861 22.681-54.963 22.681Zm0-245.167q-32.652 0-55.878-23.134-23.226-23.135-23.226-55.623 0-32.487 23.467-55.517t56.12-23.03q32.102 0 54.721 23.288 22.62 23.288 22.62 55.775 0 32.488-22.861 55.364-22.861 22.877-54.963 22.877Zm-.82-244.833q-32.224 0-55.254-23.288-23.03-23.289-23.03-55.623 0-32.333 23.271-55.364 23.272-23.03 55.495-23.03 32.224 0 55.193 23.288 22.969 23.289 22.969 55.622 0 32.334-23.21 55.364-23.21 23.031-55.434 23.031Z"/></svg>
+                </label>
+                <div class="toc-content">
+                    
+
+<div class="toc-container">
+    
+
+    <ul>
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/inet-os/#limits">Limits</a>
+                    
+                </li>
+            
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/inet-os/#io">IO</a>
+                    
+                </li>
+            
+        
+    </ul>
+</div>
+
+
+                </div>
+            </div>
+        
+
+        
+        
+
+        
+        <a href="#" id="top-button" class="no-hover-padding" title="Go to the top of the page">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"/></svg>
+        </a>
+    </div>
+
+
+<span id="copy-success" class="hidden">
+        Copied!
+    </span>
+    <span id="copy-init" class="hidden">
+        Copy code to clipboard
+    </span>
+    <script defer src="https://franchufranchu.github.io/js/copyCodeToClipboard.min.js"></script>
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+                ¿qué haría Piñón Fijo?
+            </small>
+        </div>
+    </section>
+
+    </footer>
+
+</body>
+
+</html>

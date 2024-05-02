@@ -1,0 +1,271 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://franchufranchu.github.io">
+
+    
+    <title>franchu blog • all things</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="franchu blog" href="https://franchufranchu.github.io/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/main.css?h=03882d7b0d0cfe74b15f" />
+        <link rel="stylesheet" href="https://franchufranchu.github.io/skins/franchu.css?h=4060f41fdbd6f1a3aede" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="" />
+        <meta property="og:description" content="" />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="all things" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;junk&#x2F;all-things&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
+        <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
+        <script defer src="https://franchufranchu.github.io/js/themeSwitcher.min.js"></script><script src="/js/ASCIIMathML.js"></script>
+
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://franchufranchu.github.io>franchu blog</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/questions/">
+                                questions
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/answers/">
+                                answers
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/junk/">
+                                junk
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/archive/">
+                                archive
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/tags/">
+                                tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/about/">
+                                about
+                                </a>
+                            </li>
+                        
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div 
+class="content"
+>
+
+        
+        
+<script src="/js/konva.min.js"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", () => {
+	// https://pubs.aip.org/aapt/ajp/article/91/10/819/2911822/All-objects-and-some-questions
+
+	// kg m s
+
+	// first we need to create a stage
+	var stage = new Konva.Stage({
+	  container: 'container',   // id of container <div>
+	  width: 500,
+	  height: 500,
+	  draggable: true,
+	  x: 100,
+	  y: 1200,
+	  scaleX: 2,
+	  scaleY: 2,
+	});
+
+	function scaleX(x) {
+		return 10 * (Math.log(x) / Math.log(10))
+	}
+	function scaleY(y) {
+		return -10 * (Math.log(y) / Math.log(10))
+	}
+	function extend(line) {
+		let [a0, a1, b0, b1] = line;
+		let m = (a1 - b1) / (a0 - b0);
+
+		return [a0 - 1000, a1 - 1000 * m, b0 + 1000, b1 + 1000 * m, ]
+	}
+	function densityLine(f) {
+
+		let ps = [scaleX(1e-10), scaleY(f(1e-10)), scaleX(1e10), scaleY(f(1e10))]
+		console.log(ps)
+		return new Konva.Line({
+			points: extend(ps),
+			stroke: 'black',
+			strokeWidth: 1,
+		});
+	
+	}
+
+	var container = document.querySelector('#container');
+	stage.width(container.offsetWidth);
+	stage.height(container.offsetHeight);
+
+	// then create layer
+	var layer = new Konva.Layer();
+
+	var scaleBy = 2;
+
+	let G_constant = 6.674e-11;
+	let C_constant = 2.998e+08;
+	let H_constant = 1.055e-34;
+	// draw schwardzild line:
+	// r_s = 2G/c^2 m
+	let schwDensity = 1 / (2 * G_constant / (C_constant * C_constant))
+
+	layer.add(densityLine(x => schwDensity * x));
+
+	// draw compton line:
+	// λ_c = h_bar / mc 
+	// r = mc / h_bar 
+	let compAntidensity = C_constant / H_constant
+	layer.add(densityLine(x => compAntidensity / x));
+	layer.add(densityLine(x => x * x * x * 9.9e-30));
+
+	// add the layer to the stage
+	stage.add(layer);
+
+		  stage.on('wheel', (e) => {
+		    // stop default scrolling
+		    e.evt.preventDefault();
+
+		    var oldScale = stage.scaleX();
+		    var pointer = stage.getPointerPosition();
+
+		    var mousePointTo = {
+		      x: (pointer.x - stage.x()) / oldScale,
+		      y: (pointer.y - stage.y()) / oldScale,
+		    };
+
+		    // how to scale? Zoom in? Or zoom out?
+		    let direction = e.evt.deltaY < 0 ? 1 : -1;
+
+		    // when we zoom on trackpad, e.evt.ctrlKey is true
+		    // in that case lets revert direction
+		    if (e.evt.ctrlKey) {
+		      direction = -direction;
+		    }
+
+		    var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+		    stage.scale({ x: newScale, y: newScale });
+
+		    var newPos = {
+		      x: pointer.x - mousePointTo.x * newScale,
+		      y: pointer.y - mousePointTo.y * newScale,
+		    };
+		    stage.position(newPos);
+		  });
+	// draw the image
+	layer.draw();
+})
+</script>
+<div id="container" style="border: 1px solid black; width: 100%; height: 700px">
+	
+</div>
+
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+                ¿qué haría Piñón Fijo?
+            </small>
+        </div>
+    </section>
+
+    </footer>
+
+</body>
+
+</html>

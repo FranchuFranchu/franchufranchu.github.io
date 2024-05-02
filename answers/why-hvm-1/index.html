@@ -1,0 +1,300 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://franchufranchu.github.io">
+
+    
+    <title>franchu blog • Duplications must have an opposite</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="franchu blog" href="https://franchufranchu.github.io/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/main.css?h=03882d7b0d0cfe74b15f" />
+        <link rel="stylesheet" href="https://franchufranchu.github.io/skins/franchu.css?h=4060f41fdbd6f1a3aede" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="" />
+        <meta property="og:description" content="" />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="Duplications must have an opposite" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;answers&#x2F;why-hvm-1&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
+        <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
+        <script defer src="https://franchufranchu.github.io/js/themeSwitcher.min.js"></script><script src="/js/ASCIIMathML.js"></script>
+
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://franchufranchu.github.io>franchu blog</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/questions/">
+                                questions
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/answers/">
+                                answers
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/junk/">
+                                junk
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/archive/">
+                                archive
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/tags/">
+                                tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/about/">
+                                about
+                                </a>
+                            </li>
+                        
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div 
+class="content"
+>
+
+        
+        
+
+
+
+
+<main>
+    <article>
+        <h1 class="article-title">
+            Duplications must have an opposite
+        </h1>
+
+        <ul class="meta">
+            
+
+            
+
+            
+            
+                • <li title="488 words">3 min read</li>
+            
+        </ul>
+        
+
+        
+        
+
+        <section class="body">
+            
+            
+            <p>We have figured out how to represent many operations as composition of constant-time atomic instructions. For example, a bubble sort is just a set of swaps. A counter is just a series of increments. The sum of a list is just a series of pairwise additions.</p>
+<p>This is good, because it allows us to parallelize these operations. All parallel algorithms represent an operation as a series of smaller operatiions.</p>
+<p>In many programming languages, cloning is an atomic operation. This means that we can not have two threads clone a value at the same time. However, cloning is not a constant-time operation. For example, cloning a very large tree will take longer than cloning a small tree.</p>
+<p>This is not good. This makes cloning inherently un-parallelizable.</p>
+<p>In addition, sometimes we don't need to clone the whole tree. For example, consider the following Rust code:</p>
+<pre data-lang="rs" class="language-rs z-code"><code class="language-rs" data-lang="rs"><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-function z-rust"><span class="z-storage z-type z-function z-rust">fn</span> </span><span class="z-entity z-name z-function z-rust">foo</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">(</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-end z-rust">)</span></span></span></span><span class="z-meta z-function z-rust"> <span class="z-meta z-function z-return-type z-rust"><span class="z-punctuation z-separator z-rust">-&gt;</span> <span class="z-storage z-type z-rust">i32</span></span> </span><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	<span class="z-storage z-type z-rust">let</span> val_1 <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">42</span><span class="z-punctuation z-separator z-rust">,</span> some_huge_term</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	<span class="z-storage z-type z-rust">let</span> val_2 <span class="z-keyword z-operator z-assignment z-rust">=</span> val_1<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">clone</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>val_1<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-constant z-numeric z-integer z-decimal z-rust">0</span> <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">10</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span> <span class="z-keyword z-operator z-arithmetic z-rust">*</span> <span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>val_2<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-constant z-numeric z-integer z-decimal z-rust">0</span> <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">10</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-function z-rust"><span class="z-storage z-type z-function z-rust">fn</span> </span><span class="z-entity z-name z-function z-rust">bar</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-begin z-rust">(</span></span><span class="z-meta z-function z-rust"><span class="z-meta z-function z-parameters z-rust"><span class="z-punctuation z-section z-parameters z-end z-rust">)</span></span></span></span><span class="z-meta z-function z-rust"> <span class="z-meta z-function z-return-type z-rust"><span class="z-punctuation z-separator z-rust">-&gt;</span> <span class="z-storage z-type z-rust">i32</span></span> </span><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	<span class="z-storage z-type z-rust">let</span> val_1 <span class="z-keyword z-operator z-assignment z-rust">=</span> <span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-constant z-numeric z-integer z-decimal z-rust">42</span><span class="z-punctuation z-separator z-rust">,</span> some_huge_term</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-constant z-numeric z-integer z-decimal z-rust">0</span> <span class="z-keyword z-operator z-arithmetic z-rust">+</span> <span class="z-constant z-numeric z-integer z-decimal z-rust">10</span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	<span class="z-storage z-type z-rust">let</span> val_2 <span class="z-keyword z-operator z-assignment z-rust">=</span> val_1<span class="z-punctuation z-accessor z-dot z-rust">.</span><span class="z-support z-function z-rust">clone</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span></span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-terminator z-rust">;</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	val_1 <span class="z-keyword z-operator z-arithmetic z-rust">*</span> val_2
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span></code></pre>
+<p>Both functions are the same thing. <code>foo</code> clones, and then carries out an operation. <code>bar</code> carries out an operation, and then clones. Most likely, LLVM would optimize both functions to the same thing. But semantically, <code>foo</code> carries out an <em>expensive</em> clone and then a <em>cheap</em> operation, while <code>bar</code> carries out a <em>cheap</em> operation, and then the clone becmoes cheap. It would be nice if both formulations were completely equivalent.</p>
+<p>This happens because cloning whole trees is atomic. We'll see later how decomposing duplication helps solve this problem too.</p>
+<h2 id="incremental-cloning">Incremental cloning</h2>
+<p>We can imagine an incremental cloning operation, which clones only a single term and defers cloning subterms for later on.</p>
+<p>Let's call this operation <code>dup</code>, which stands for <em>duplication</em>. This is how it would look like:</p>
+<pre class="z-code"><code><span class="z-text z-plain">dup a b = (1, (2, 3));
+</span></code></pre>
+<p><code>a</code> and <code>b</code> would both contain copies of <code>(1, (2, 3))</code> after this expression is reduced. The reduction would look something like this:</p>
+<pre class="z-code"><code><span class="z-text z-plain">dup a b = (1, (2, 3));
+</span><span class="z-text z-plain">-------------
+</span><span class="z-text z-plain">dup c0 c1 = 1;
+</span><span class="z-text z-plain">dup d0 d1 = (2, 3);
+</span><span class="z-text z-plain">a = (c0, d0);
+</span><span class="z-text z-plain">b = (c1, d1);
+</span><span class="z-text z-plain">--------------
+</span><span class="z-text z-plain">dup d0 d1 = (2, 3);
+</span><span class="z-text z-plain">a = (1, d0);
+</span><span class="z-text z-plain">b = (1, d1);
+</span><span class="z-text z-plain">--------------
+</span><span class="z-text z-plain">dup e0 e1 = 2;
+</span><span class="z-text z-plain">dup f0 f1 = 3;
+</span><span class="z-text z-plain">a = (1, (e0, f0));
+</span><span class="z-text z-plain">b = (1, (e1, f1));
+</span><span class="z-text z-plain">--------------
+</span><span class="z-text z-plain">dup f0 f1 = 3;
+</span><span class="z-text z-plain">a = (1, (2, f0));
+</span><span class="z-text z-plain">b = (1, (2, f1));
+</span><span class="z-text z-plain">--------------
+</span><span class="z-text z-plain">a = (1, (2, 3));
+</span><span class="z-text z-plain">b = (1, (2, 3));
+</span></code></pre>
+<p>We decomposed a single duplication operation into 5 atomic independent duplication operations.</p>
+<p>The cool thing about this algorithm is that it's done in a layer-by-layer basis. This means that if all tree branching points are constant-size (for example, in cons lists) we can implement each step in constant time.</p>
+<h2 id="duplicating-lambdas">Duplicating lambdas</h2>
+<p>What if we want to duplicate lambdas?</p>
+<p>Consider <code>λxλy(x y)</code>. Let's try to apply our algorithm naively.</p>
+<pre class="z-code"><code><span class="z-text z-plain">dup a b = λxλy(x y);
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">dup x0 x1 = x;
+</span><span class="z-text z-plain">
+</span></code></pre>
+
+        </section>
+
+        
+        
+        
+        
+
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+
+        
+        
+
+        
+        
+
+    </article>
+</main>
+
+
+<span id="copy-success" class="hidden">
+        Copied!
+    </span>
+    <span id="copy-init" class="hidden">
+        Copy code to clipboard
+    </span>
+    <script defer src="https://franchufranchu.github.io/js/copyCodeToClipboard.min.js"></script>
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+                ¿qué haría Piñón Fijo?
+            </small>
+        </div>
+    </section>
+
+    </footer>
+
+</body>
+
+</html>

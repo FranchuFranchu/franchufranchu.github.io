@@ -1,0 +1,346 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://franchufranchu.github.io">
+
+    
+    <title>franchu blog • inet processor</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="franchu blog" href="https://franchufranchu.github.io/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://franchufranchu.github.io/main.css?h=03882d7b0d0cfe74b15f" />
+        <link rel="stylesheet" href="https://franchufranchu.github.io/skins/franchu.css?h=4060f41fdbd6f1a3aede" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="interaction net proecssing unit" />
+        <meta property="og:description" content="interaction net proecssing unit" />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="inet processor" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;questions&#x2F;inet-processing-unit&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
+        <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
+        <script defer src="https://franchufranchu.github.io/js/themeSwitcher.min.js"></script><script src="/js/ASCIIMathML.js"></script>
+
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://franchufranchu.github.io>franchu blog</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/questions/">
+                                questions
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/answers/">
+                                answers
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/junk/">
+                                junk
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/archive/">
+                                archive
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/tags/">
+                                tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://franchufranchu.github.io/about/">
+                                about
+                                </a>
+                            </li>
+                        
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div 
+class="content"
+>
+
+        
+        
+
+
+
+
+<main>
+    <article>
+        <h1 class="article-title">
+            inet processor
+        </h1>
+
+        <ul class="meta">
+            
+
+            
+
+            
+            
+        </ul>
+        
+
+        
+        
+
+        <section class="body">
+            
+            
+            <div>
+	Side content
+</div>
+<div class="text">
+<h2 id="the-limitations-of-the-von-neumann-architecture"><a class="header-anchor no-hover-padding" href="#the-limitations-of-the-von-neumann-architecture" aria-label="Anchor link for: the-limitations-of-the-von-neumann-architecture"><span class="link-icon" aria-hidden="true"></span></a>
+The limitations of the Von Neumann architecture</h2>
+<p>Modern computing &quot;pretends&quot; that memory access is O(1). For example, all array accesses look equal, and it doesn't matter whether we're addressing sequential data or sparse data: <code>a[0], a[1], a[10000]</code>. </p>
+<p>But this does not match up with reality. Data takes time to travel across the processor. If the CPU had to wait for the data stored at the opposite side of the chip to arrive, computers would be very slow.</p>
+<p>The solution we have is that processors have a cache closer to the processor where they store frequently accessed data. Thus, in a modern computer, not all addresses are created equal. Some addresses are faster than others. Sequential access, for example, is much faster than random access.</p>
+<p>However, our programming languages don't model this. All addresses <em>look</em> equal.</p>
+<p>Modern computing also brings limitations to parallelism. The fact that memory is shared between all cores is not good. If two cores which are far apart modify data that is far away, solving the conflict with atomics will take time. The two cores have to communicate (i.e. using atomics) to reach an agreement regarding the value of the modified.</p>
+<p>This is because <strong>the computations we do are not local</strong>. Any computation can change any piece of data anywhere. This is a fundamental stumbling block that prevents massive parallelism with traditional computing.</p>
+<h2 id="interaction-nets"><a class="header-anchor no-hover-padding" href="#interaction-nets" aria-label="Anchor link for: interaction-nets"><span class="link-icon" aria-hidden="true"></span></a>
+Interaction Nets</h2>
+<p>Interaction nets are a model of computation that's, in many ways, nicer than the Turing Machine. Unlike in the Turing machine, computation is parallelizable, Unlike in the Lambda-Calculus, computation is divided into small, constant-time steps. And unlike modern computers, computation is local and confluent.</p>
+<p>The computer's state is represented by a graph. Nodes are called <em>agents</em>. Agents have a <em>principal port</em>, and zero or more <em>auxiliary ports</em>. Agents are also assumed to have a <em>type</em> which determines they behavior.</p>
+<p>When two agents are connected through their principal ports, they <em>interact</em>. The result is a local <em>graph rewrite</em>. The graph rewrite can rewrite the agent's auxiliary ports, potentially creating new agents in the process.</p>
+<p>Interaction Nets are Turing-complete; it is possible to build a set of agents which have reduction rules that simulate a Turing machine.</p>
+<h3 id="interaction-combinators"><a class="header-anchor no-hover-padding" href="#interaction-combinators" aria-label="Anchor link for: interaction-combinators"><span class="link-icon" aria-hidden="true"></span></a>
+Interaction Combinators</h3>
+<p>In λ-calculus, there are two terms that can be combined to encode any other set of term. They are called &quot;combinators&quot;.</p>
+<ascii-math>
+	S = λxλyλz(x z (y z))
+	K = λxλy(x z)
+</ascii-math>
+<p>We can combine them to create any λ-calculus term. For example, <code>λfλx(f (f x)) = (S(S(KS)K)(SKK))</code></p>
+<p>It turns out that there is a set of three interaction net agents which can emulate any other interaction net.</p>
+<pre data-lang="rs" class="language-rs z-code"><code class="language-rs" data-lang="rs"><span class="z-source z-rust"><span class="z-storage z-modifier z-rust">pub</span> <span class="z-storage z-type z-rust">const</span> <span class="z-constant z-other z-rust">TIME_MAX</span><span class="z-punctuation z-separator z-rust">:</span> <span class="z-storage z-type z-rust">u32</span><span class="z-punctuation z-separator z-rust">,</span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-storage z-type z-struct z-rust">struct</span> </span><span class="z-meta z-struct z-rust"><span class="z-entity z-name z-struct z-rust">Address</span> </span><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">x</span><span class="z-punctuation z-separator z-type z-rust">:</span> <span class="z-storage z-type z-rust">i32</span>,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">y</span><span class="z-punctuation z-separator z-type z-rust">:</span> <span class="z-storage z-type z-rust">i32</span>,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">z</span><span class="z-punctuation z-separator z-type z-rust">:</span> <span class="z-storage z-type z-rust">i32</span>,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">t</span><span class="z-punctuation z-separator z-type z-rust">:</span> <span class="z-storage z-type z-rust">u32</span>,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-storage z-type z-struct z-rust">struct</span> </span><span class="z-meta z-struct z-rust"><span class="z-entity z-name z-struct z-rust">Wire</span> </span><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">address</span><span class="z-punctuation z-separator z-type z-rust">:</span> Address,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-enum z-rust"><span class="z-storage z-type z-enum z-rust">enum</span> <span class="z-entity z-name z-enum z-rust">Port</span> <span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-enum z-rust"><span class="z-meta z-block z-rust">	Binary<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span><span class="z-storage z-type z-rust">usize</span><span class="z-punctuation z-separator z-rust">,</span> Wire<span class="z-punctuation z-separator z-rust">,</span> Wire</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-separator z-rust">,</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-enum z-rust"><span class="z-meta z-block z-rust">	Redirect<span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-begin z-rust">(</span>Wire</span><span class="z-meta z-group z-rust"><span class="z-punctuation z-section z-group z-end z-rust">)</span></span><span class="z-punctuation z-separator z-rust">,</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-enum z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span><span class="z-source z-rust">
+</span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-storage z-type z-struct z-rust">struct</span> </span><span class="z-meta z-struct z-rust"><span class="z-entity z-name z-struct z-rust">Rewriter</span> </span><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-begin z-rust">{</span>
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">coords</span><span class="z-punctuation z-separator z-type z-rust">:</span> Address,
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust">	<span class="z-variable z-other z-member z-rust">nodes</span><span class="z-punctuation z-separator z-type z-rust">:</span> [<span class="z-storage z-type z-rust">u32</span>; TIME_MAX]
+</span></span></span><span class="z-source z-rust"><span class="z-meta z-struct z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
+</span></code></pre>
+</div>
+        </section>
+
+        
+        
+        
+        
+
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+
+        
+        
+
+        
+        
+
+    </article>
+</main>
+
+    <div id="button-container">
+        
+        
+            <div id="toc-floating-container">
+                <input type="checkbox" id="toc-toggle" class="toggle"/>
+                <label for="toc-toggle" class="overlay"></label>
+                <label for="toc-toggle" id="toc-button" class="button" title="Toggle Table of Contents">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M414.82-193.094q-18.044 0-30.497-12.32-12.453-12.319-12.453-30.036t12.453-30.086q12.453-12.37 30.497-12.37h392.767q17.237 0 29.927 12.487 12.69 12.486 12.69 30.203 0 17.716-12.69 29.919t-29.927 12.203H414.82Zm0-244.833q-18.044 0-30.497-12.487Q371.87-462.9 371.87-480.45t12.453-29.92q12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.511 12.69 12.512 12.69 29.845 0 17.716-12.69 30.086-12.69 12.37-29.927 12.37H414.82Zm0-245.167q-18.044 0-30.497-12.32t-12.453-30.037q0-17.716 12.453-30.086 12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.486 12.69 12.487 12.69 30.203 0 17.717-12.69 29.92-12.69 12.203-29.927 12.203H414.82ZM189.379-156.681q-32.652 0-55.878-22.829t-23.226-55.731q0-32.549 23.15-55.647 23.151-23.097 55.95-23.097 32.799 0 55.313 23.484 22.515 23.484 22.515 56.246 0 32.212-22.861 54.893-22.861 22.681-54.963 22.681Zm0-245.167q-32.652 0-55.878-23.134-23.226-23.135-23.226-55.623 0-32.487 23.467-55.517t56.12-23.03q32.102 0 54.721 23.288 22.62 23.288 22.62 55.775 0 32.488-22.861 55.364-22.861 22.877-54.963 22.877Zm-.82-244.833q-32.224 0-55.254-23.288-23.03-23.289-23.03-55.623 0-32.333 23.271-55.364 23.272-23.03 55.495-23.03 32.224 0 55.193 23.288 22.969 23.289 22.969 55.622 0 32.334-23.21 55.364-23.21 23.031-55.434 23.031Z"/></svg>
+                </label>
+                <div class="toc-content">
+                    
+
+<div class="toc-container">
+    
+
+    <ul>
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/inet-processing-unit/#the-limitations-of-the-von-neumann-architecture">The limitations of the Von Neumann architecture</a>
+                    
+                </li>
+            
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/inet-processing-unit/#interaction-nets">Interaction Nets</a>
+                    
+                        <ul>
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/inet-processing-unit/#interaction-combinators">Interaction Combinators</a>
+                                        
+                                    </li>
+                                
+                            
+                        </ul>
+                    
+                </li>
+            
+        
+    </ul>
+</div>
+
+
+                </div>
+            </div>
+        
+
+        
+        
+
+        
+        <a href="#" id="top-button" class="no-hover-padding" title="Go to the top of the page">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"/></svg>
+        </a>
+    </div>
+
+
+<span id="copy-success" class="hidden">
+        Copied!
+    </span>
+    <span id="copy-init" class="hidden">
+        Copy code to clipboard
+    </span>
+    <script defer src="https://franchufranchu.github.io/js/copyCodeToClipboard.min.js"></script>
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+                ¿qué haría Piñón Fijo?
+            </small>
+        </div>
+    </section>
+
+    </footer>
+
+</body>
+
+</html>
