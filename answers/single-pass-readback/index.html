@@ -153,7 +153,7 @@ class="content"
 
             
             
-                • <li title="667 words">4 min read</li>
+                • <li title="754 words">4 min read</li>
             
         </ul>
         
@@ -164,28 +164,35 @@ class="content"
         <section class="body">
             
             
-            <p>Interaction Nets are a model of computation. There exist an interaction sysatem that can be used to implement the λ-calculus. In this article I'll discuss a readback algorithm that can be used to read an interaction net into a λ-calculus term. </p>
+            <p>Interaction Nets are a model of computation. There exist an interaction sysatem that can be used to implement the λ-calculus. In this article I'll discuss a readback algorithm that can be used to read an interaction net into a λ-calculus term.</p>
 <p>This article assumes that the reader is somewhat familiar with the symmetric interaction calculus.</p>
 <h2 id="polarity">Polarity</h2>
 <p>A very important concept that springs up when talking about readback is <em>polarity</em>. It turns out that the interaction nets that correspond to λ-calculus terms can be <em>polarized</em>. A polarization of an interaction net is a labeling of ports with either <code>+</code> or <code>-</code>, such that all wires connect a <code>+</code> port and a <code>-</code> port. Each agent type has a fixed polarization for its ports.</p>
-<p>For the purposes of polarization, CON agents are not always the same CON agent type, but sometimes they represent LAM agents and sometimes they represent APP agents, depending on context. Similarly, DUP agents are either DUP agents or SUP agents, depending on context. </p>
+<p>For the purposes of polarization, CON agents are not always the same CON agent type, but sometimes they represent LAM agents and sometimes they represent APP agents, depending on context. Similarly, DUP agents are either DUP agents or SUP agents, depending on context.</p>
 <p>Later on, we will see how the readback algorithm always has enough information to distinguish between DUP/SUP and LAM/APP when reaching a node.</p>
 <h3 id="sic-polarization">SIC Polarization</h3>
-<p>For inets representing λ-calculus, <code>+</code>-polarized ports will represent ports that &quot;produce&quot; terms, while <code>-</code>-polarized ports will represent ports that &quot;consume&quot; terms.</p>
-<p>It's important to concretely define what is meant by &quot;produce&quot; and &quot;consume&quot; here. Does a LAM node &quot;produce&quot; or &quot;consume&quot; its argument? A common interpretation is &quot;well, a LAM node is simply waiting to 'eat' an argument from an APP node, so it definitely consumes an argument&quot;. But that's not the definition that's used to define <code>+</code> and <code>-</code>. Polarity does not depend on what <em>will happen</em> to the node; it only depends on what it <em>currently represents</em> in the λ-calculus AST. Thanks to the LAM node, there's a variable that can be used somewhere else. This means that the LAM node <em>produced</em> the variable.</p>
-<p>So, for example, a LAM node &quot;produces&quot; an argument and the function, while it &quot;consumes&quot; the body. Given a body term, the LAM node will create an argument and a function that sets the argument and returns the function body. Their polarity is <code>+/+/-</code>.</p>
-<p>An APP node is the opposite. It &quot;consumes&quot; the function and an argument, while it &quot;produces&quot; the return value of the function. Given a function and an argument, the APP node can be used to create an application of the function to the argument. Their polarity is <code>-/-/+</code>.</p>
+<p>For inets representing λ-calculus, <code>+</code>-polarized ports will represent ports that "produce" terms, while <code>-</code>-polarized ports will represent ports that "consume" terms.</p>
+<p>It's important to concretely define what is meant by "produce" and "consume" here. Does a LAM node "produce" or "consume" its argument? A common interpretation is "well, a LAM node is simply waiting to 'eat' an argument from an APP node, so it definitely consumes an argument". But that's not the definition that's used to define <code>+</code> and <code>-</code>. Polarity does not depend on what <em>will happen</em> to the node; it only depends on what it <em>currently represents</em> in the λ-calculus AST. Thanks to the LAM node, there's a variable that can be used somewhere else. This means that the LAM node <em>produced</em> the variable.</p>
+<p>So, for example, a LAM node "produces" an argument and the function, while it "consumes" the body. Given a body term, the LAM node will create an argument and a function that sets the argument and returns the function body. Their polarity is <code>+/+/-</code>.</p>
+<p>An APP node is the opposite. It "consumes" the function and an argument, while it "produces" the return value of the function. Given a function and an argument, the APP node can be used to create an application of the function to the argument. Their polarity is <code>-/-/+</code>.</p>
 <p>The two CON node variants have opposite polarities. In both of them, the two auxiliary ports have opposite polarities. The fact that they polarity sets are exact opposites of one another means that annihilation between them respects polarity, as shown here.</p>
 <p>DUP nodes consume a term from their principal port, and produce two copies of it through their auxiliary port. Their polarity is <code>-/+/+</code>.</p>
 <p>SUP nodes consume two terms through their auxiliary ports, and produce their superposition through their principal port. Their polarity is <code>+/-/-</code></p>
-<p>Polarity is what makes terms such as <code>(λx λx (y y))</code> invalid. <code>x</code> is bound twice and <code>y</code> is used twice. </p>
+<p>Polarity is what makes terms such as <code>(λx λx (y y))</code> invalid. <code>x</code> is bound twice and <code>y</code> is used twice.</p>
 <p>You can't plug two lambda arguments together. In polarity, this is encoded by the fact that LAM argument ports have positive polarity, and can't be plugged in together.</p>
 <p>You also can't plug an application's argument and an application's function. In polarity, this is represented by the application argument and the application function both having negative polarity.</p>
 <h4 id="on-readback">On readback</h4>
-<p>If a readback algorithm reaches a node through any of its ports, if it knows the polarity of the port it came from, it can deduce the node type variant of the node it reached. </p>
+<p>If a readback algorithm reaches a node through any of its ports, if it knows the polarity of the port it came from, it can deduce the node type variant of the node it reached.</p>
 <p>For example, if we reach a CON node through its principal port, coming from a <code>-</code> port, we know the CON node must produce a value through its principal port. This means that the CON node is a LAM node and represents a lambda.</p>
-<p>This is because there are no two variants that have the same polarity for any of the nodes.</p>
+<p>This is because there are no two variants that have the same polarity for any of the nodes. We can use this to write "inference rules" for polarity.</p>
+<ul>
+<li>todo draw inference rules</li>
+</ul>
 <h2 id="the-algorithm">The algorithm.</h2>
+<p>We can use this information to write a single-pass algorithm using "inference rules".</p>
+<p>We only need two functions: <code>read_neg</code>, which reads from a <code>-</code> port into a <code>+</code> port, and <code>read_pos</code>, which reads from a <code>+</code> port into a <code>-</code> port.</p>
+<p><code>read_pos</code> will take a <code>Tree</code> and a <code>Term</code>, while <code>read_neg</code> will take a <code>Tree</code> and a "term hole" which <code>read_neg</code> will fill.</p>
+<p>also read: https://github.com/HigherOrderCO/bend/blob/direct-readback/src/term/readback/linear.rs</p>
 
         </section>
 

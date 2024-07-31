@@ -162,7 +162,126 @@ class="content"
         <section class="body">
             
             
-            <p>contents</p>
+            <p>A type system is a system that can be used to divide programs into <em>well-typed</em> programs and <em>ill-typed</em> programs, by assigning a <em>type</em> to each <em>term</em>. Functions, for example, are defined as taking an argument which must be an instance of a type. Programs that pass terms outside that type to the function are ill-typed.</p>
+<p>Many type theories enjoy many benefits which make them practical, for example:</p>
+<ul>
+<li>They are <strong>composable</strong> Knowing that a subprogram is <em>well-typed</em> allows us to make judgements about the superprogram that contains the subprogram.</li>
+<li>They are partially <a href="https://en.wikipedia.org/wiki/Decidability_(logic)"><strong>decidable</strong></a>. This means that there exists an algorithm to check whether a term is contained in a type, regardless of the type's definition. This stands in contrast with set theory, where set membership must be proved in all cases, and can't be "checked" algorithmically.</li>
+<li>They are <strong>sound</strong>. This means that you can't get "runtime type errors"; which implies that you can't construct arbitrary instances of types, that the empty type is in fact empty, etc. An unsound system can get unexpected values in runtime that aren't members of a type, despite the program being <em>well-typed</em>. This makes type theories suitable as a foundation of mathematics and as a way to prove program invariants. A lot of type systems aren't sound because they allow constructing terms that check against any type. This is usually the case for "complex" type systems, which introduce a large set of features to express many different of constructions. <a href="https://counterexamples.org/intro.html">Here's a collection of unsoudness examples in type systems</a>.</li>
+</ul>
+<p>It would be really nice if we had a type theory for interaction nets.</p>
+<h2 id="motivation"><a class="header-anchor no-hover-padding" href="#motivation" aria-label="Anchor link for: motivation"><span class="link-icon" aria-hidden="true"></span></a>
+Motivation</h2>
+<p>There's a lot of challenges with type systems that could be solved by a system which employs interacion nets.</p>
+<h3 id="function-extensionality-proof"><a class="header-anchor no-hover-padding" href="#function-extensionality-proof" aria-label="Anchor link for: function-extensionality-proof"><span class="link-icon" aria-hidden="true"></span></a>
+Function extensionality proof</h3>
+<p>There's a system called the <a href="https://medium.com/@maiavictor/the-abstract-calculus-fe8c46bcf39c"><em>symmetric interaction calculus</em></a>. It is like λ-calculus, but with explicit duplication and scopeless lambdas. Scopeless lambdas are lambdas that can bind values which are used outside their body. This is possible because of SIC's linearity.</p>
+<p>The Symmetric Interaction Calculus can be thought of as a textual representation of symmetric interaction combinators. In October 2023, T6 shared this proof of function extensionality in a pseudo-type-checked language that includes scopeless lambdas</p>
+<pre class="z-code"><code><span class="z-text z-plain">Eq (T: Type) (a: T) (b: T) : Type = (P: T -&gt; Type) (h: P a) -&gt; P b
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">funext
+</span><span class="z-text z-plain">  (T U : Type)
+</span><span class="z-text z-plain">  (f g : T -&gt; U) 
+</span><span class="z-text z-plain">  (h : (t: T) -&gt; Eq U (f t) (g t))
+</span><span class="z-text z-plain">:
+</span><span class="z-text z-plain">  Eq (T -&gt; U) f g
+</span><span class="z-text z-plain">=
+</span><span class="z-text z-plain">  (P : (T -&gt; U) -&gt; Type)
+</span><span class="z-text z-plain">  (a : P f) =&gt;
+</span><span class="z-text z-plain">    h $t ((u: U) =&gt; P (($t : T) =&gt; u)) a 
+</span></code></pre>
+<p>Function extensionality is a proposition which states that "two functions are equal if their results are equal for all arguments". It's usually included as an axiom. But it turns out that it can be proved with scopeless lambdas. <code>$t</code> is the scopeless variable.</p>
+<p>I'll assume the reader is familiar with the usual definitions of intensional equality, reflexivity, function extensionality, etc, and broadly explain what is going on here.</p>
+<p>To prove equality, we need to generate <code>(P g)</code> for any <code>(P f)</code> with the hypotheses we have at our disposal. The magic hypothesis is <code>(h : (t: T) -&gt; Eq U (f t) (g t))</code>, which tells us that for any <code>P</code> and <code>t</code>, <code>(P (f t))</code> can be replaced with <code>(P (g t))</code></p>
+<p>We'll start with <code>(P f)</code>. This is eta-equivalent to <code>(P ((t : T) =&gt; (f t)))</code>, simply by eta-expanding <code>f</code>. We can also turn <code>t</code> into a scopeless variable here; it doesn't make a difference yet because this is still a traditional lambda: <code>(P (($t : T) =&gt; (f $t)))</code>.</p>
+<p>Now, we'll "abstract away" the <code>(f $t)</code>: We'll replace it by a new variable <code>u</code> that is set by a new lambda: <code>((u: U) =&gt; P (($t : T) =&gt; u)) (f $t))</code>.</p>
+<p><code>((u: U) =&gt; P (($t : T) =&gt; u))</code> looks like a type class. As a consequence, we can use <code>h</code> to replace <code>(f $t)</code>, which is its argument, with <code>(g $t)</code></p>
+<p>Now we have <code>((u: U) =&gt; P (($t : T) =&gt; u)) (g $t))</code>. If we reduce the application, we get <code>(P (($t : T) =&gt; (g $t)))</code>. This is eta-equivalent to <code>(P g)</code>.</p>
+<p>We have shown how to get from the "premise" <code>(P f)</code> to the conclusion <code>(P g)</code>. This is what T6's proof does. The "magic trick" is that scopeless lambdas allow us to separate <code>$t</code> from the binding lambda, which allows using <code>h</code> in a more powerful way. (specifically, the variable occurs in the type class argument, but it's bound in the type class).</p>
+<p>Ideally, a interaction type theory would allow us to do this.</p>
+<h3 id="sound-type-in-type"><a class="header-anchor no-hover-padding" href="#sound-type-in-type" aria-label="Anchor link for: sound-type-in-type"><span class="link-icon" aria-hidden="true"></span></a>
+Sound type-in-type</h3>
+<p>SIC is closely related to EAL, and it turns out that in EAL, type-in-type unsoundness can't be constructed. <em>todo....</em></p>
+<h2 id="my-attempts"><a class="header-anchor no-hover-padding" href="#my-attempts" aria-label="Anchor link for: my-attempts"><span class="link-icon" aria-hidden="true"></span></a>
+My attempts</h2>
+<p>I've worked with a lot of approaches to this. Here's a few of them.</p>
+<h3 id="bridge-node"><a class="header-anchor no-hover-padding" href="#bridge-node" aria-label="Anchor link for: bridge-node"><span class="link-icon" aria-hidden="true"></span></a>
+"Bridge" node</h3>
+<p>This is less of an approach and more of an "ingredient" of interaction type theories.</p>
+<p>In the symmetric interaction calculus, each term constructors has an "opposite" or "dual" relative to <a href="https://franchufranchu.github.io/answers/single-pass-readback/">polarity</a>. For example, lambdas and applications are dual, duplications and superpositions are dual and erased variables and unused values are dual.</p>
+<p>In any interaction type theory which features an "annotation" node as a separate agent, that's also based on interaction combinators, it's natural to ask what the dual to an annotation is. I've called the result with a variety of names: the <code>typeof</code> operator, the <code>ann-lambda</code>, the <code>ann-binder</code>, the <code>theta</code> node, the <code>thorn</code> node, and the <code>bridge</code> node. It seems like the <code>bridge</code> node is the name that stuck.</p>
+<p>If annotations are like applications, then bridge is like lambda. It's represented like this: <code>θx body</code>. A bridge binds a variable and contains a body. It's defined by the following reduction rule:</p>
+<pre class="z-code"><code><span class="z-text z-plain">&lt;x : θy body&gt;
+</span><span class="z-text z-plain">------------- ANN-BRI
+</span><span class="z-text z-plain">x ~ y; body
+</span></code></pre>
+<p>This is like the rule for lambda application, which looks like this:</p>
+<pre class="z-code"><code><span class="z-text z-plain">(λy(body) x)
+</span><span class="z-text z-plain">------------ APP-LAM
+</span><span class="z-text z-plain">x ~ y; body
+</span></code></pre>
+<p>Bridge is the constructor for types. It allows us to define dependent types, not as primitives, but as compound types.</p>
+<pre class="z-code"><code><span class="z-text z-plain"># Function type
+</span><span class="z-text z-plain">Fun = λA λB θf λx &lt;(f &lt;x: A&gt;): B&gt;
+</span><span class="z-text z-plain"># Dependent function
+</span><span class="z-text z-plain">All = λA λB θf λx &lt;(f &lt;x: A&gt;): (B x)&gt;
+</span><span class="z-text z-plain"># Self-dependent (inductive) function
+</span><span class="z-text z-plain">Ind = λA λB θf λx &lt;(f &lt;x: A&gt;): (B f x)&gt;
+</span><span class="z-text z-plain"># by Taelin
+</span></code></pre>
+<p>This definitions, when used with annotation nodes, will reduce to simple atomic checks such as <code>&lt;&lt;x: A&gt;: A&gt;</code> or <code>&lt;&lt;x: B&gt;: A&gt;</code>.</p>
+<p>Bridge is an <em>extremely</em> dependent type constructor. A lot of constructs that aren't traditionally possible are possible with Bridge. I don't yet know if bridge makes a type theory unsound. It could be possible.</p>
+<h3 id="equality-node"><a class="header-anchor no-hover-padding" href="#equality-node" aria-label="Anchor link for: equality-node"><span class="link-icon" aria-hidden="true"></span></a>
+Equality node.</h3>
+<p>todo...
+also write about self-annihilation.</p>
+<h3 id="taelin-s-leap-idea"><a class="header-anchor no-hover-padding" href="#taelin-s-leap-idea" aria-label="Anchor link for: taelin-s-leap-idea"><span class="link-icon" aria-hidden="true"></span></a>
+Taelin's "leap" idea</h3>
+<p>Repo: <a href="https://github.com/VictorTaelin/Interaction-Type-Theory">https://github.com/VictorTaelin/Interaction-Type-Theory</a> (don't follow the "moved" link in the README)</p>
+<p>This is the first interaction type theory I know of. Most documentation for this idea is scattered in a few repos and Twitter posts. The idea is checking all "paths" from the root to the root for a property called "coherence", which is related to the balance of ANN nodes.</p>
+<h3 id="extended-ambigious-box-construct"><a class="header-anchor no-hover-padding" href="#extended-ambigious-box-construct" aria-label="Anchor link for: extended-ambigious-box-construct"><span class="link-icon" aria-hidden="true"></span></a>
+Extended ambigious box construct</h3>
+<p>No repo. This is T6's idea. It is a way to look at Taelin's leap and leaps idea and what it means.</p>
+<p>We can imagine an "ambiguous box" node, which can reduce in two ways. We'll say a net is coherent iff both reductions result in equivalent nets.</p>
+<p><img src="/svg/box_either.svg"></img></p>
+<p>We can "slice" this 4-port node into two 3-port nodes, either "in parallel" or "in series". This allows us to "move" the 3-port nodes and extend the invariant enforced by the ambiguous box across the whole net.</p>
+<p><img src="/svg/box_slice.svg"></img></p>
+<p>The "in parallel" slice corresponds to Taelin's annotation. The "in series" slice would work roughly like equality.</p>
+<p>Unfortunately this seems impractical, or almost impossible to check naively. That's why I'm not going into much detail.</p>
+<h3 id="fixed-point-type-theory"><a class="header-anchor no-hover-padding" href="#fixed-point-type-theory" aria-label="Anchor link for: fixed-point-type-theory"><span class="link-icon" aria-hidden="true"></span></a>
+Fixed point type theory</h3>
+<p>Repo: <a href="https://github.com/FranchuFranchu/fixpoint-itt">https://github.com/FranchuFranchu/fixpoint-itt</a></p>
+<p>What if we define the instance-of relationship like this:</p>
+<pre class="z-code"><code><span class="z-text z-plain">x is an instance of T iff &lt;x: T&gt; == x
+</span></code></pre>
+<p>This is the result of that idea. This would be very powerful because it'd allow us to define types for a lot of sets of terms; a bit like set theory predicates. Unfortunately, for checking to be practical, we'd like to be able to construct types <code>T</code> such that <code>&lt;&lt;x: T&gt;: T&gt;</code> reduces to <code>&lt;x: T&gt;</code>, but that seems to be impossible. The best I can do is <code>&lt;&lt;x: T&gt;: T&gt;</code> reducing to <code>x</code>, but that's much harder to work with. This is mostly documented in a Discord thread.</p>
+<h3 id="taelin-s-interaction-calculus-of-constructions"><a class="header-anchor no-hover-padding" href="#taelin-s-interaction-calculus-of-constructions" aria-label="Anchor link for: taelin-s-interaction-calculus-of-constructions"><span class="link-icon" aria-hidden="true"></span></a>
+Taelin's "interaction calculus of constructions"</h3>
+<p>Repo: <a href="https://github.com/VictorTaelin/Interaction-Calculus-of-Constructions">https://github.com/VictorTaelin/Interaction-Calculus-of-Constructions</a></p>
+<p>If I understand correctly, this is essentially SIC + bridges + an equality checker. I'm not sure what the status of this is right now. It seems to be the most complete interaction type theory here as of right now.</p>
+<h3 id="t6-s-inet-lifetimes"><a class="header-anchor no-hover-padding" href="#t6-s-inet-lifetimes" aria-label="Anchor link for: t6-s-inet-lifetimes"><span class="link-icon" aria-hidden="true"></span></a>
+T6's <em>inet-lifetimes</em></h3>
+<p>Repo: <a href="https://github.com/tjjfvi/inet-lifetimes">https://github.com/tjjfvi/inet-lifetimes</a></p>
+<p>Inet-lifetimes is an answer to the question: "how can we prevent vicious circles in interaction nets (without Lafont's simplicity criterion)". It works by defining a partial order between wires that's preserved by redution, using rust-like lifetimes and types. Unfortunately, it lacks dependent types, which makes it unsuitable for foundations of mathematics.</p>
+<h3 id="typed-agents"><a class="header-anchor no-hover-padding" href="#typed-agents" aria-label="Anchor link for: typed-agents"><span class="link-icon" aria-hidden="true"></span></a>
+Typed agents</h3>
+<p>Repo: <a href="https://github.com/FranchuFranchu/typed-agents">https://github.com/FranchuFranchu/typed-agents</a></p>
+<p>This is my most recent approach. It's based on <a href="https://polarity-lang.github.io/">Polarity</a>, a language with a heavy duality between positive and negative terms, but with interaction nets.</p>
+<p>This approach works by defining an interaction system with an instance-of relationship between agent types, which has the following properties.</p>
+<ul>
+<li><strong>Completeness</strong>: If T ~ U is defined, and t: T, u: U, then t ~ u must be defined too.</li>
+<li><strong>Well-typedness</strong>: Undefined interactions are not allowed.</li>
+</ul>
+<p>Unfortunately, the way type-checking works does not play well with nonlinearity. A lot of types such as <code>Eq</code> are very nonlinear. I suspect I'll have to define universes and other constructs which is not what I want.</p>
+<p>At some point typed-agents became too confusing for me and I stopped working on it. I'm also not sure what the destructor of a type means.</p>
+<h2 id="my-hunch"><a class="header-anchor no-hover-padding" href="#my-hunch" aria-label="Anchor link for: my-hunch"><span class="link-icon" aria-hidden="true"></span></a>
+My hunch</h2>
+<p>I believe that we should discard the textual λ-calculus-like respresentation of interaction nets. It's not powerful and it ties us to traditional λ-calculus-based models, which suffer from a lot of problems that interaction nets fix.</p>
+<p>I also think an interaction type theory would be linear. Nonlinearity is just a consequence of λ-calculus. Duplicating types should be avoided whenever possible.</p>
+<p>I think that an interaction type theory will <em>not</em> have a natural λ-calculus-based representation. I think that <em>typed-agents</em> is the closest I've gotten to a true interaction type theory, but it still suffers from a lot of complexity that I'd like to get rid of.</p>
+<h2 id="conclusion"><a class="header-anchor no-hover-padding" href="#conclusion" aria-label="Anchor link for: conclusion"><span class="link-icon" aria-hidden="true"></span></a>
+Conclusion</h2>
+<p>A lot of research is needed here!</p>
 
         </section>
 
@@ -208,6 +327,123 @@ class="content"
 
     <div id="button-container">
         
+        
+            <div id="toc-floating-container">
+                <input type="checkbox" id="toc-toggle" class="toggle"/>
+                <label for="toc-toggle" class="overlay"></label>
+                <label for="toc-toggle" id="toc-button" class="button" title="Toggle Table of Contents">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M414.82-193.094q-18.044 0-30.497-12.32-12.453-12.319-12.453-30.036t12.453-30.086q12.453-12.37 30.497-12.37h392.767q17.237 0 29.927 12.487 12.69 12.486 12.69 30.203 0 17.716-12.69 29.919t-29.927 12.203H414.82Zm0-244.833q-18.044 0-30.497-12.487Q371.87-462.9 371.87-480.45t12.453-29.92q12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.511 12.69 12.512 12.69 29.845 0 17.716-12.69 30.086-12.69 12.37-29.927 12.37H414.82Zm0-245.167q-18.044 0-30.497-12.32t-12.453-30.037q0-17.716 12.453-30.086 12.453-12.369 30.497-12.369h392.767q17.237 0 29.927 12.486 12.69 12.487 12.69 30.203 0 17.717-12.69 29.92-12.69 12.203-29.927 12.203H414.82ZM189.379-156.681q-32.652 0-55.878-22.829t-23.226-55.731q0-32.549 23.15-55.647 23.151-23.097 55.95-23.097 32.799 0 55.313 23.484 22.515 23.484 22.515 56.246 0 32.212-22.861 54.893-22.861 22.681-54.963 22.681Zm0-245.167q-32.652 0-55.878-23.134-23.226-23.135-23.226-55.623 0-32.487 23.467-55.517t56.12-23.03q32.102 0 54.721 23.288 22.62 23.288 22.62 55.775 0 32.488-22.861 55.364-22.861 22.877-54.963 22.877Zm-.82-244.833q-32.224 0-55.254-23.288-23.03-23.289-23.03-55.623 0-32.333 23.271-55.364 23.272-23.03 55.495-23.03 32.224 0 55.193 23.288 22.969 23.289 22.969 55.622 0 32.334-23.21 55.364-23.21 23.031-55.434 23.031Z"/></svg>
+                </label>
+                <div class="toc-content">
+                    
+
+<div class="toc-container">
+    
+
+    <ul>
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#motivation">Motivation</a>
+                    
+                        <ul>
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#function-extensionality-proof">Function extensionality proof</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#sound-type-in-type">Sound type-in-type</a>
+                                        
+                                    </li>
+                                
+                            
+                        </ul>
+                    
+                </li>
+            
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#my-attempts">My attempts</a>
+                    
+                        <ul>
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#bridge-node">&quot;Bridge&quot; node</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#equality-node">Equality node.</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#taelin-s-leap-idea">Taelin&#x27;s &quot;leap&quot; idea</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#extended-ambigious-box-construct">Extended ambigious box construct</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#fixed-point-type-theory">Fixed point type theory</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#taelin-s-interaction-calculus-of-constructions">Taelin&#x27;s &quot;interaction calculus of constructions&quot;</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#t6-s-inet-lifetimes">T6&#x27;s inet-lifetimes</a>
+                                        
+                                    </li>
+                                
+                            
+                                
+                                    <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#typed-agents">Typed agents</a>
+                                        
+                                    </li>
+                                
+                            
+                        </ul>
+                    
+                </li>
+            
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#my-hunch">My hunch</a>
+                    
+                </li>
+            
+        
+            
+            
+                <li><a href="https://franchufranchu.github.io/questions/interaction-type-theory/#conclusion">Conclusion</a>
+                    
+                </li>
+            
+        
+    </ul>
+</div>
+
+
+                </div>
+            </div>
         
 
         
