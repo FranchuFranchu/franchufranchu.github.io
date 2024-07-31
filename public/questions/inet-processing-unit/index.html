@@ -168,7 +168,7 @@ class="content"
 <div class="text">
 <h2 id="the-limitations-of-the-von-neumann-architecture"><a class="header-anchor no-hover-padding" href="#the-limitations-of-the-von-neumann-architecture" aria-label="Anchor link for: the-limitations-of-the-von-neumann-architecture"><span class="link-icon" aria-hidden="true"></span></a>
 The limitations of the Von Neumann architecture</h2>
-<p>Modern computing &quot;pretends&quot; that memory access is O(1). For example, all array accesses look equal, and it doesn't matter whether we're addressing sequential data or sparse data: <code>a[0], a[1], a[10000]</code>. </p>
+<p>Modern computing "pretends" that memory access is O(1). For example, all array accesses look equal, and it doesn't matter whether we're addressing sequential data or sparse data: <code>a[0], a[1], a[10000]</code>.</p>
 <p>But this does not match up with reality. Data takes time to travel across the processor. If the CPU had to wait for the data stored at the opposite side of the chip to arrive, computers would be very slow.</p>
 <p>The solution we have is that processors have a cache closer to the processor where they store frequently accessed data. Thus, in a modern computer, not all addresses are created equal. Some addresses are faster than others. Sequential access, for example, is much faster than random access.</p>
 <p>However, our programming languages don't model this. All addresses <em>look</em> equal.</p>
@@ -182,7 +182,7 @@ Interaction Nets</h2>
 <p>Interaction Nets are Turing-complete; it is possible to build a set of agents which have reduction rules that simulate a Turing machine.</p>
 <h3 id="interaction-combinators"><a class="header-anchor no-hover-padding" href="#interaction-combinators" aria-label="Anchor link for: interaction-combinators"><span class="link-icon" aria-hidden="true"></span></a>
 Interaction Combinators</h3>
-<p>In λ-calculus, there are two terms that can be combined to encode any other set of term. They are called &quot;combinators&quot;.</p>
+<p>In λ-calculus, there are two terms that can be combined to encode any other set of term. They are called "combinators".</p>
 <ascii-math>
 	S = λxλyλz(x z (y z))
 	K = λxλy(x z)

@@ -153,7 +153,7 @@ class="content"
 
             
             
-                • <li title="488 words">3 min read</li>
+                • <li title="1116 words">6 min read</li>
             
         </ul>
         
@@ -164,7 +164,8 @@ class="content"
         <section class="body">
             
             
-            <p>We have figured out how to represent many operations as composition of constant-time atomic instructions. For example, a bubble sort is just a set of swaps. A counter is just a series of increments. The sum of a list is just a series of pairwise additions.</p>
+            <h2 id="decomposing-duplication">Decomposing Duplication</h2>
+<p>We have figured out how to represent many operations as composition of constant-time atomic instructions. For example, a bubble sort is just a set of swaps. A counter is just a series of increments. The sum of a list is just a series of pairwise additions.</p>
 <p>This is good, because it allows us to parallelize these operations. All parallel algorithms represent an operation as a series of smaller operatiions.</p>
 <p>In many programming languages, cloning is an atomic operation. This means that we can not have two threads clone a value at the same time. However, cloning is not a constant-time operation. For example, cloning a very large tree will take longer than cloning a small tree.</p>
 <p>This is not good. This makes cloning inherently un-parallelizable.</p>
@@ -181,14 +182,14 @@ class="content"
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust">	val_1 <span class="z-keyword z-operator z-arithmetic z-rust">*</span> val_2
 </span></span></span><span class="z-source z-rust"><span class="z-meta z-function z-rust"><span class="z-meta z-block z-rust"></span><span class="z-meta z-block z-rust"><span class="z-punctuation z-section z-block z-end z-rust">}</span></span></span>
 </span></code></pre>
-<p>Both functions are the same thing. <code>foo</code> clones, and then carries out an operation. <code>bar</code> carries out an operation, and then clones. Most likely, LLVM would optimize both functions to the same thing. But semantically, <code>foo</code> carries out an <em>expensive</em> clone and then a <em>cheap</em> operation, while <code>bar</code> carries out a <em>cheap</em> operation, and then the clone becmoes cheap. It would be nice if both formulations were completely equivalent.</p>
+<p>Both functions are the same thing. <code>foo</code> clones, and then carries out an operation. <code>bar</code> carries out an operation, and then clones. Most likely, LLVM would optimize both functions to the same thing. But semantically, <code>foo</code> carries out an <em>expensive</em> clone and then a <em>cheap</em> operation, while <code>bar</code> carries out a <em>cheap</em> operation, and then the clone becomes cheap. It would be nice if both formulations were completely equivalent.</p>
 <p>This happens because cloning whole trees is atomic. We'll see later how decomposing duplication helps solve this problem too.</p>
 <h2 id="incremental-cloning">Incremental cloning</h2>
 <p>We can imagine an incremental cloning operation, which clones only a single term and defers cloning subterms for later on.</p>
 <p>Let's call this operation <code>dup</code>, which stands for <em>duplication</em>. This is how it would look like:</p>
 <pre class="z-code"><code><span class="z-text z-plain">dup a b = (1, (2, 3));
 </span></code></pre>
-<p><code>a</code> and <code>b</code> would both contain copies of <code>(1, (2, 3))</code> after this expression is reduced. The reduction would look something like this:</p>
+<p><code>a</code> and <code>b</code> would both contain copies of <code>(1, (2, 3))</code> after this expression is reduced. The <code>dup</code> expression binds <code>a</code> and <code>b</code>. The reduction would look something like this:</p>
 <pre class="z-code"><code><span class="z-text z-plain">dup a b = (1, (2, 3));
 </span><span class="z-text z-plain">-------------
 </span><span class="z-text z-plain">dup c0 c1 = 1;
@@ -213,7 +214,7 @@ class="content"
 </span><span class="z-text z-plain">b = (1, (2, 3));
 </span></code></pre>
 <p>We decomposed a single duplication operation into 5 atomic independent duplication operations.</p>
-<p>The cool thing about this algorithm is that it's done in a layer-by-layer basis. This means that if all tree branching points are constant-size (for example, in cons lists) we can implement each step in constant time.</p>
+<p>The cool thing about this algorithm is that it's done in a layer-by-layer basis. This means that if all tree branching points are constant-size (for example, in cons lists) <strong>we can implement each step in constant time.</strong></p>
 <h2 id="duplicating-lambdas">Duplicating lambdas</h2>
 <p>What if we want to duplicate lambdas?</p>
 <p>Consider <code>λxλy(x y)</code>. Let's try to apply our algorithm naively.</p>
@@ -222,8 +223,109 @@ class="content"
 </span><span class="z-text z-plain">a = λx0(a0)
 </span><span class="z-text z-plain">b = λx1(a1)
 </span><span class="z-text z-plain">dup x0 x1 = x;
-</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">dup a0 a1 = λy(x y)
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0λy0(b0)
+</span><span class="z-text z-plain">b = λx1λy1(b1)
+</span><span class="z-text z-plain">dup x0 x1 = x;
+</span><span class="z-text z-plain">dup y0 y1 = y;
+</span><span class="z-text z-plain">dup b0 b1 = (x y)
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0λy0(c0 d0)
+</span><span class="z-text z-plain">b = λx1λy1(c1 d1)
+</span><span class="z-text z-plain">dup x0 x1 = x;
+</span><span class="z-text z-plain">dup y0 y1 = y;
+</span><span class="z-text z-plain">dup c0 c1 = x;
+</span><span class="z-text z-plain">dup d0 d1 = y;
+</span><span class="z-text z-plain">-------------------- now, we&#39;ll duplicate all variables.
+</span><span class="z-text z-plain">a = λxλy(x y)
+</span><span class="z-text z-plain">b = λxλy(x y)
 </span></code></pre>
+<p>This is very nice! It reduces correctly. However, there is a <em>semantic</em> mistake in what I'm doing here. Take a closer look at this step here:</p>
+<pre class="z-code"><code><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">dup x0 x1 = x;
+</span><span class="z-text z-plain">dup a0 a1 = λy(x y)
+</span></code></pre>
+<p>What are we doing with <code>x0</code> and <code>x1</code> here? Didn't we decide earlier that <code>dup</code> binds <code>x0</code> and <code>x1</code>? It turns out we are binding <code>x0</code> and <code>x1</code> twice here, and we are never defining <code>x</code> (and using it twice!). Fortunately, this mistake "cancels out" at the end, and the end result is correct. However, this intermediate step is meaningless. There has to be a better way to do this.</p>
+<p>It turns out that there is a term type that expresses this idea in a better way. This is the <em>superposition</em>, which is the opposite of a duplication. Instead of writing <code>dup x0 x1 = x</code>, we would write <code>x = {x0 x1}</code>. This is okay because <code>x</code> is being bound here, while <code>x0</code> and <code>x1</code> are being used. This matches up with our expectations of what this "anti-dup" operation should do.</p>
+<p>Let's rewrite the previous step using a superposition.</p>
+<pre class="z-code"><code><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">x = {x0 x1}
+</span><span class="z-text z-plain">dup a0 a1 = λy(x y)
+</span></code></pre>
+<p>We can substitute <code>x</code> here, and we'll end up with:</p>
+<pre class="z-code"><code><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">dup a0 a1 = λy({x0 x1} y)
+</span></code></pre>
+<p>Now I'll write the previous reduction again, but using superpositions instead.</p>
+<pre class="z-code"><code><span class="z-text z-plain">dup a b = λxλy(x y);
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">dup a0 a1 = λy({x0 x1} y)
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0λy0(b0)
+</span><span class="z-text z-plain">b = λx1λy1(b1)
+</span><span class="z-text z-plain">dup b0 b1 = ({x0 x1} {y0 y1})
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0λy0(c0 d0)
+</span><span class="z-text z-plain">b = λx1λy1(c1 d1)
+</span><span class="z-text z-plain">dup c0 c1 = {x0 x1};
+</span><span class="z-text z-plain">dup d0 d1 = {y0 y1};
+</span><span class="z-text z-plain">--------------------
+</span><span class="z-text z-plain">a = λx0λy0(x0 y0)
+</span><span class="z-text z-plain">b = λx1λy1(x1 y1)
+</span></code></pre>
+<p>This is the correct reduction, and doesn't suffer from the double-binding issue we had before. I've added another reduction rule here, which is. <code>dup x0 x1 = {y0 y1}</code> reduces to <code>x0 = y0; x1 = y1</code>.</p>
+<p>There's something really strange happening here that I ignored. In this reduction step:</p>
+<pre class="z-code"><code><span class="z-text z-plain">a = λx0(a0)
+</span><span class="z-text z-plain">b = λx1(a1)
+</span><span class="z-text z-plain">dup a0 a1 = λy({x0 x1} y)
+</span></code></pre>
+<p><code>x0</code> and <code>x1</code> are variables that are being used <strong>outside of the lambdas that bind them!</strong>. We will later see how this is not a weakness, but a strength. I'll write more about these "scopeless lambdas" later.</p>
+<h2 id="the-symmetric-interaction-calculus">The Symmetric Interaction Calculus</h2>
+<p>The end result of this is the <a href="https://medium.com/@maiavictor/the-abstract-calculus-fe8c46bcf39c">Symmetric Interaction Calculus</a>. The Symmetric Interaction Calculus has four reduction rules:</p>
+<pre class="z-code"><code><span class="z-text z-plain">The Symmetric Interaction Calculus
+</span><span class="z-text z-plain">term
+</span><span class="z-text z-plain">  = λx. term               -- function
+</span><span class="z-text z-plain">  | (term term)            -- application
+</span><span class="z-text z-plain">  | x                      -- variable
+</span><span class="z-text z-plain">  | {term term}            -- superposition
+</span><span class="z-text z-plain">  | dup x0 x1 = term; term -- duplication
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Reduction rules:
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Lambda application:
+</span><span class="z-text z-plain">  ((λx. body) arg)
+</span><span class="z-text z-plain">  ------------------------
+</span><span class="z-text z-plain">  x &lt;~ arg; body
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Superposition application:
+</span><span class="z-text z-plain">  ({x0 x1} b)
+</span><span class="z-text z-plain">  ------------------------
+</span><span class="z-text z-plain">  dup b0 b1 = b; {(x0 b0) (x1 b1)}
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Lambda duplication:
+</span><span class="z-text z-plain">  dup a0 a1 = λx b
+</span><span class="z-text z-plain">  -------------------------
+</span><span class="z-text z-plain">  x &lt;~ {x0 x1};
+</span><span class="z-text z-plain">  a0 &lt;~ λx0 b0;
+</span><span class="z-text z-plain">  a1 &lt;~ λx1 b1;
+</span><span class="z-text z-plain">  dup b0 b1 = b;
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Superposed duplication:
+</span><span class="z-text z-plain">  dup a0 a1 = {b0 b1}
+</span><span class="z-text z-plain">  -------------------------
+</span><span class="z-text z-plain">  a0 &lt;~ b0;
+</span><span class="z-text z-plain">  a1 &lt;~ b1;
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">a &lt;~ b means a is replaced by b
+</span></code></pre>
+<p>The Symmetric Interaction Calculus is isomorphic to a subset of Symmetric Interaction Combinators called <em>directed</em> (or <em>polarized</em>) Interaction Combinators.  This subset is enough to implement Turing Machines, which means that this language is Turing Complete.</p>
+<p>This algorithm is really good because each operation is atomic and constant time.</p>
 
         </section>
 

@@ -10,7 +10,7 @@
     <meta name="base" content="https://franchufranchu.github.io">
 
     
-    <title>franchu blog • Human Rights</title>
+    <title>franchu blog • Interaction Type Theories</title>
 
     
     
@@ -37,14 +37,14 @@
         <meta name="robots" content="index, nofollow" />
     
 
-    <meta property="og:title" content="Human Rights" />
+    <meta property="og:title" content="Interaction Type Theories" />
     <meta property="og:type" content="article" />
 
     
 
     <meta property="og:locale" content="en_GB" />
 
-    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;junk&#x2F;conlangs&#x2F;udhr&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
+    <meta property="og:url" content="https:&#x2F;&#x2F;franchufranchu.github.io&#x2F;drafts&#x2F;icc&#x2F;" /><meta property="og:site_name" content="franchu blog"><meta http-equiv="Content-Security-Policy"
 content="default-src 'self';font-src 'self' data:;img-src 'self' https://* data:;media-src 'self';style-src 'self' 'unsafe-inline';frame-src player.vimeo.com https://www.youtube-nocookie.com;connect-src 'self' ws:;script-src 'self' 'unsafe-inline' 'self';">
         <noscript><link rel="stylesheet" href="https://franchufranchu.github.io/no_js.css"/></noscript>
         <script type="text/javascript" src="https://franchufranchu.github.io/js/initializeTheme.min.js"></script>
@@ -143,7 +143,7 @@ class="content"
 <main>
     <article>
         <h1 class="article-title">
-            Human Rights
+            Interaction Type Theories
         </h1>
 
         <ul class="meta">
@@ -153,7 +153,7 @@ class="content"
 
             
             
-                • <li title="260 words">2 min read</li>
+                • <li title="185 words">1 min read</li>
             
         </ul>
         
@@ -164,20 +164,26 @@ class="content"
         <section class="body">
             
             
-            <p>English: All human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.</p>
-<p>Literal: The things that it is wanted that they can do and the thing that it is wanted that quantifies them,  is not different for one person and for all another person that is different from the first one is at when human beings start existing. They can think and they can think that things are wanted or not wanted and it is wanted that the way that a person interacts with a person that is different from the first person is the same as the way that a person interacts with a person that started existing in the same place as the first person.</p>
-<p>Literal: the thing that it is wanted that quantifies them
-Translation: <code>thing SWP quantify thing SWP want patient actor</code></p>
-<p>Literal: the thing that it is wanted they can do
-Translation: <code>SWP cause maybe thing SWP want patient actor</code></p>
-<p>Literal: they can think
-Translation: <code>QUO think GET thing think maybe</code></p>
-<p>Literal: they can think that things are wanted or not wanted
-Translation: <code>QUO think GET thing thing SET thing thing GET want thing thing GET SWP want not or and think maybe</code></p>
-<p>Literal: human beings start existing
-Translation: <code>QUO think GET thing be.at begin</code></p>
-<p>Literal: is not different for one person and for all another person that is different from the first one</p>
-<p>Literal: <code>QUO also GET be QUO two QUO quantify GET cause cause</code></p>
+            <h2 id="type-systems">Type systems</h2>
+<p>A type system is a system which assigns a property called <em>type</em> to every <em>term</em>. Powerful typesystems, such as the Calculus of Constructions, can be used as alternative foundations to mathematics, which can then be used to write proof-checkers which statically verify properties of specific programs.</p>
+<p>For example, <em>simply typed lambda calculus</em> is a type system built on top of <em>inference rules</em>. At its core, it has two important inference rules.</p>
+<pre class="z-code"><code><span class="z-text z-plain">x: T; y: U
+</span><span class="z-text z-plain">------------------
+</span><span class="z-text z-plain">(λx:T. y):(T -&gt; U)
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">x: T -&gt; U; y: T
+</span><span class="z-text z-plain">------------------
+</span><span class="z-text z-plain">(x y): U
+</span></code></pre>
+<p>This is an informal description; most formal presentations use <em>contexts</em> to accurately specify what these inference rules mean and where and how they can be applied.</p>
+<p>It would be desirable to have something like this for the Symmetric Interaction Calculus.</p>
+<h2 id="decomposing-type-checking">Decomposing type-checking</h2>
+<p>The first rule of simply-typed lambda calculus looks remarkably like a commutation. We could imagine a term rewriting system where this reduction happens.</p>
+<pre class="z-code"><code><span class="z-text z-plain">&lt;x -&gt; y : T -&gt; U&gt;
+</span><span class="z-text z-plain">-----------------
+</span><span class="z-text z-plain">&lt;x: T&gt; -&gt; &lt;y: U&gt;
+</span></code></pre>
+<p>This is very similar to the STLC reduction, but backwards. A complex annotation has been reduced into two simple annotations.</p>
 
         </section>
 
